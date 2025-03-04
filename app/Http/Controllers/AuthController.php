@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Mail; // Ajout de cette ligne
+use App\Mail\WelcomeEmail; // Ajout de cette ligne
 
 class AuthController extends Controller
 {
@@ -23,10 +25,15 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user', 
+            'role' => 'user',
         ]);
+
         Auth::login($user);
-        return redirect()->route('home'); 
+
+        // Envoyer un e-mail de bienvenue
+        Mail::to($user->email)->send(new WelcomeEmail($user));
+
+        return redirect()->route('home');
     }
 
     public function showLoginForm()
@@ -40,7 +47,16 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('home'); // Redirige vers la page d'accueil après la connexion
+
+            // Vérifier si l'e-mail est vérifié
+            if (!Auth::user()->hasVerifiedEmail()) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Your email address is not verified.',
+                ])->withInput();
+            }
+
+            return redirect()->intended('home');
         }
 
         return back()->withErrors([
@@ -53,6 +69,6 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/'); 
+        return redirect('/');
     }
 }

@@ -19,13 +19,13 @@ class StoreRevenueRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'description' => 'nullable|string|max:255',
-            'amount' => 'required|numeric|min:0',
+            'description' => 'required|string|max:255',
+            'amount' => 'required|numeric',
             'date' => 'required|date',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
         ];
     }
 }

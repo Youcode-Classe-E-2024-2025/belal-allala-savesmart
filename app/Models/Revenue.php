@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Revenue extends Model
 {
+    protected $casts = [
+        'date' => 'date', // Cela convertira automatiquement la colonne en Carbon
+    ];
     use HasFactory;
+
+    // Dans le modèle Revenue
+    
 
     protected $fillable = [
         'user_id',
@@ -15,7 +21,7 @@ class Revenue extends Model
         'amount',
         'description',
         'date',
-        'category',
+        'category_id', // Utilisez category_id
     ];
 
     public function user()

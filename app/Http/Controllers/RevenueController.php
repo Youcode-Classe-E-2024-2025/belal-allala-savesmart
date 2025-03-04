@@ -16,6 +16,11 @@ class RevenueController extends Controller
     public function index()
     {
         $user = auth()->user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
         $families = $user->families;
         $revenues = Revenue::where('user_id', $user->id)->get();
 
@@ -28,6 +33,11 @@ class RevenueController extends Controller
     public function create()
     {
         $user = auth()->user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
         $categories = Category::where('user_id', $user->id)
             ->where(function ($query) use ($user) {
                 $query->where('family_id', null)
@@ -63,7 +73,9 @@ class RevenueController extends Controller
      */
     public function show(Revenue $revenue)
     {
-        if (auth()->user()->id !== $revenue->user_id) {
+        $user = auth()->user();
+
+        if (!$user || $user->id !== $revenue->user_id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -75,11 +87,21 @@ class RevenueController extends Controller
      */
     public function edit(Revenue $revenue)
     {
-        if (auth()->user()->id !== $revenue->user_id) {
+        $user = auth()->user();
+
+        if (!$user || $user->id !== $revenue->user_id) {
             abort(403, 'Unauthorized action.');
         }
 
-        return view('revenues.edit', compact('revenue'));
+        $categories = Category::where('user_id', $user->id)
+            ->where(function ($query) use ($user) {
+                $query->where('family_id', null)
+                    ->orWhere('family_id', $user->family_id);
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view('revenues.edit', compact('revenue', 'categories'));
     }
 
     /**
