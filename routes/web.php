@@ -50,3 +50,7 @@ Route::resource('expenses', ExpenseController::class);
 Route::resource('goals', GoalController::class);
 
 Route::resource('categories', CategoryController::class);
+
+Route::post('/optimize', [BudgetController::class, 'optimize'])->name('budget.optimize');
+Route::get('/optimize', [BudgetController::class, 'showOptimizationForm'])->name('budget.form')->middleware('auth');
+Route::post('/optimize', [BudgetController::class, 'optimize'])->name('budget.optimize')->middleware('auth');
