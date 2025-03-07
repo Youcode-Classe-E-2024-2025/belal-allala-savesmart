@@ -2,7 +2,7 @@
 
 ## Description
 
-<!-- SaveSmart est une application web développée avec Laravel qui aide les utilisateurs à gérer leurs finances personnelles en suivant leurs revenus et leurs dépenses, et en leur fournissant une répartition automatique du budget selon des règles logiques. -->
+SaveSmart est une application web développée avec Laravel qui aide les utilisateurs à gérer leurs finances personnelles en suivant leurs revenus et leurs dépenses, et en leur fournissant une répartition automatique du budget selon des règles logiques.
 
 ## Fonctionnalités Principales
 
